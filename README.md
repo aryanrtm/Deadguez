@@ -13,6 +13,11 @@ Dependencies
 - sshpass
 
 
+Demo
+=
+[![asciicast](https://asciinema.org/a/322011.png)](https://asciinema.org/a/322011?autoplay=1&loop=1)
+
+
 Tested on
 =
 
@@ -26,3 +31,18 @@ Tested on
         <td> 19.2 Tina </td>
     </tr>
 </table>
+
+
+Contact
+=
+- Twitter: @4wsec_
+
+
+License
+=
+GNU General Public License v3.0
+
+
+Copyright
+=
+Deadguez is made with ❤️ by Arya Narotama - Anon Cyber Team - 2020
