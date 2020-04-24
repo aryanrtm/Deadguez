@@ -28,7 +28,7 @@ Tested on
     </tr>
     <tr>
         <td>Linux Mint</td>
-        <td> 19.2 Tina </td>
+        <td> 19.3 Tricia </td>
     </tr>
 </table>
 
