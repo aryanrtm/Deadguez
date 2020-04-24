@@ -146,7 +146,8 @@ while true; do
 			THREADS=50
 		fi
 		printf "\n\t${WH}[ ${CY}Scanner Mode ${BD}${GR}ON ${NT}${WH}]\n\n"
-
+		
+		IFS=$'\r\n'
 		for IPLIST in $(cat $IP_LIST); do
 			for USERLIST in $(cat $USER_LIST); do
 				for PASSLIST in $(cat $PASS_LIST); do
