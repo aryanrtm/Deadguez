@@ -45,4 +45,4 @@ GNU General Public License v3.0
 
 Copyright
 =
-Deadguez is made with ❤️ by Arya Narotama - Anon Cyber Team - 2020
+Deadguez is made with ❤️ by Arya Narotama - 2020
